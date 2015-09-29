@@ -13,24 +13,41 @@ This technique can be easily adapted for other built-ins (e.g. int).
 The Problem
 -----------
 
-    a = [1, 2, 4, 8]
-    a.x = "Hey!" # AttributeError: 'list' object has no attribute 'x'
+```Python
+a = [1, 2, 4, 8]
+a.x = "Hey!" # AttributeError: 'list' object has no attribute 'x'
+```
 
 The Solution
 ------------
 
-    a = L(1, 2, 4, 8)
-    a.x = "Hey!"
-    print a       # [1, 2, 4, 8]
-    print len(a)  # 4
+```Python
+class L(list):
+ 
+    def __new__(self, *args, **kwargs):
+        return super(L, self).__new__(self, args, kwargs)
+ 
+    def __init__(self, *args, **kwargs):
+        if len(args) == 1 and hasattr(args[0], '__iter__'):
+            list.__init__(self, args[0])
+        else:
+            list.__init__(self, args)
+        self.__dict__.update(kwargs)
 
-    You can also do these:
-    a = L( 1, 2, 4, 8 , x="Hey!" )                 # [1, 2, 4, 8]
-    a = L( [1, 2, 4, 8] , x="Hey!" )               # [1, 2, 4, 8]
-    a = L( {1, 2, 4, 8} , x="Hey!" )               # [1, 2, 4, 8]
-    a = L( (2 ** b for b in range(4)) , x="Hey!" ) # [1, 2, 4, 8]
-    a = L( [2 ** b for b in range(4)] , x="Hey!" ) # [1, 2, 4, 8]
-    a = L( 2 )                                     # [2]
+
+a = L(1, 2, 4, 8)
+a.x = "Hey!"
+print a       # [1, 2, 4, 8]
+print len(a)  # 4
+
+# You can also do these:
+a = L( 1, 2, 4, 8 , x="Hey!" )                 # [1, 2, 4, 8]
+a = L( [1, 2, 4, 8] , x="Hey!" )               # [1, 2, 4, 8]
+a = L( {1, 2, 4, 8} , x="Hey!" )               # [1, 2, 4, 8]
+a = L( (2 ** b for b in range(4)) , x="Hey!" ) # [1, 2, 4, 8]
+a = L( [2 ** b for b in range(4)] , x="Hey!" ) # [1, 2, 4, 8]
+a = L( 2 )                                     # [2]
+```
 
 Tags
 ----
