@@ -11,14 +11,17 @@ class L(list):
     a = L(1, 2, 4, 8)
     a.x = "Hey!"
     print a       # [1, 2, 4, 8]
+    print a.x     # "Hey!"
     print len(a)  # 4
 
     You can also do these:
     a = L( 1, 2, 4, 8 , x="Hey!" )                 # [1, 2, 4, 8]
+    a = L( 1, 2, 4, 8 )( x="Hey!" )                # [1, 2, 4, 8]
     a = L( [1, 2, 4, 8] , x="Hey!" )               # [1, 2, 4, 8]
     a = L( {1, 2, 4, 8} , x="Hey!" )               # [1, 2, 4, 8]
-    a = L( (2 ** b for b in range(4)) , x="Hey!" ) # [1, 2, 4, 8]
     a = L( [2 ** b for b in range(4)] , x="Hey!" ) # [1, 2, 4, 8]
+    a = L( (2 ** b for b in range(4)) , x="Hey!" ) # [1, 2, 4, 8]
+    a = L( 2 ** b for b in range(4) )( x="Hey!" )  # [1, 2, 4, 8]
     a = L( 2 )                                     # [2]
     """
     def __new__(self, *args, **kwargs):
@@ -30,3 +33,7 @@ class L(list):
         else:
             list.__init__(self, args)
         self.__dict__.update(kwargs)
+
+    def __call__(self, **kwargs):
+        self.__dict__.update(kwargs)
+        return self
